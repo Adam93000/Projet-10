@@ -5,6 +5,7 @@ import { setLogout } from '../../store/userSlice';
 function Header() {
     const isLoggedIn = useSelector(state => state.user.isLoggedIn);
     const firstName = useSelector(state => state.user.firstName);
+    const userName = useSelector(state => state.user.userName);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -28,7 +29,7 @@ function Header() {
                     <>
                         <Link to="/user" className="main-nav-item" style={{ marginRight: '10px' }}>
                             <i className="fa fa-user-circle"></i>
-                            {firstName}
+                            {userName || firstName}
                         </Link>
                         <Link to="/" className="main-nav-item" onClick={handleSignOut}>
                             <i className="fa fa-sign-out"></i>
