@@ -1,0 +1,143 @@
+openapi: 3.0.1
+info:
+  title: Argent Bank API - Phase 2 (Transactions)
+  description: API pour la gestion des transactions, des catégories et des notes personnalisées des utilisateurs d'Argent Bank.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api/v1
+paths:
+  /user/accounts/{accountId}/transactions:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions
+      summary: Récupérer les transactions d'un compte
+      description: Retourne la liste des transactions du mois en cours pour un compte bancaire spécifique.
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: string
+          description: L'identifiant unique du compte bancaire
+      responses:
+        '200':
+          description: Liste des transactions récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Non autorisé (Token JWT manquant ou invalide)
+          
+  /user/accounts/{accountId}/transactions/{transactionId}:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions
+      summary: Récupérer le détail d'une transaction
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: transactionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails de la transaction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Non autorisé
+        '404':
+          description: Transaction introuvable
+          
+    put:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions
+      summary: Modifier une transaction (Catégorie et Notes)
+      description: Permet à l'utilisateur de modifier la catégorie d'une transaction ou de sauvegarder une note personnalisée.
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: transactionId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  example: "Food"
+                notes:
+                  type: string
+                  example: "Commande de repas"
+      responses:
+        '200':
+          description: Transaction mise à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Non autorisé
+        '404':
+          description: Transaction introuvable
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "tx_0987654"
+        date:
+          type: string
+          format: date-time
+          example: "2020-06-20T10:00:00Z"
+        description:
+          type: string
+          example: "Restaurant AB"
+        amount:
+          type: number
+          example: 5.00
+        balance:
+          type: number
+          example: 2082.79
+        transactionType:
+          type: string
+          example: "Electronic"
+        category:
+          type: string
+          example: "Food"
+        notes:
+          type: string
+          example: ""
